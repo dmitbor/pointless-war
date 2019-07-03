@@ -7,6 +7,8 @@ class Soldier(Unit):
     speed = 5
     rotation_speed = 30.0
     my_squad = None
+    stat_agi = 50
+    stat_end = 50
 
     def __init__(self, namer, squad):
         self.full_name = namer.get_random_name()
