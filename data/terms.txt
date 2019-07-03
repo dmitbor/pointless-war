@@ -1,0 +1,21 @@
+[Nouns]
+{ "word" : "cat", "definitions" : { "plural" : "cats", "tags": [ "animal", "stealth", "comfort" ] } }
+{ "word" : "dog", "definitions" : { "plural" : "dogs", "tags": [ "animal", "guard", "loyal", "disloyal" ] } }
+{ "word" : "mountain", "definitions" : { "plural" : "mountains", "tags": [ "terrain", "guard", "immobile" ] } }
+
+[Adjectives]
+{ "word" : "fighting", "definitions" : { "tags" : [ "combat" , "action", "violence" ] } }
+{ "word" : "flying", "definitions" : { "tags" : [ "action", "free", "aerial" ] } }
+{ "word" : "tracking", "definitions" : { "tags" : [ "scouting", "covert" ] } }
+
+[FirstName]
+{ "word" : "John", "definitions" : { "tags" : [ "English" ] } }
+{ "word" : "Ivan", "definitions" : { "tags" : [ "Russian" ] } }
+{ "word" : "Steve", "definitions" : { "tags" : [ "English" ] } }
+{ "word" : "Artem", "definitions" : { "tags" : [ "Russian" ] } }
+
+[LastName]
+{ "word" : "Smith", "definitions" : { "tags" : [ "English" ] } }
+{ "word" : "Kotov", "definitions" : { "tags" : [ "Russian" ] } }
+{ "word" : "Crawford", "definitions" : { "tags" : [ "English" ] } }
+{ "word" : "Aristov", "definitions" : { "tags" : [ "Russian" ] } }
