@@ -92,7 +92,10 @@ class Unit:
         t_angle = math.atan2(self.target.get_y() - self.y, self.target.get_x() - self.x)
         return math.degrees(t_angle)
 
-    def calculate_next_loc(self):
-        new_x = self.x + (self.speed * math.cos(math.radians(self.face_angle)))
-        new_y = self.y + (self.speed * math.sin(math.radians(self.face_angle)))
+    def calculate_next_loc(self, movement="Walk"):
+        cur_speed = self.speed
+        if movement == "Run":
+            cur_speed *= 2
+        new_x = self.x + (cur_speed * math.cos(math.radians(self.face_angle)))
+        new_y = self.y + (cur_speed * math.sin(math.radians(self.face_angle)))
         return new_x, new_y
