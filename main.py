@@ -9,30 +9,41 @@ from battlefield.objective import Objective
 from misc.name_handle import Name_Handler
 from misc.var_calcs import two_point_distance
 from misc.faction import Faction
+from misc.cam_data import Camera_Data
 
 
-def DrawTargetLine(Screen, Unit):
-    pygame.draw.line(Screen, (50, 50, 50), (Unit.get_x(), Unit.get_y()), (Unit.get_target().get_x(), Unit.get_target().get_y()), 2)
+def DrawTargetLine(Screen, Unit, Cam_Ref):
+    zl = cam_data.get_zoom_mod()
+    cam_off = Cam_Ref.ret_cam_offset()
+    cam_pad = Cam_Ref.get_zoom_padding()
+    cam_mod = [cam_off[0] + cam_pad[0], cam_off[1] + cam_pad[1]]
+    pygame.draw.line(Screen, (50, 50, 50), ((Unit.get_x() + cam_mod[0]) / zl, (Unit.get_y() + cam_mod[1]) / zl), ((Unit.get_target().get_x() + cam_mod[0]) / zl, (Unit.get_target().get_y() + cam_mod[1]) / zl), 2)
     # pygame.display.flip()
 
 
-def DrawFaceLine(Screen, Unit):
-    pygame.draw.line(Screen, (100, 50, 100), (Unit.get_x(), Unit.get_y()), (Unit.calculate_next_loc()[0], Unit.calculate_next_loc()[1]), 2)
+def DrawFaceLine(Screen, Unit, Cam_Ref):
+    zl = cam_data.get_zoom_mod()
+    cam_off = Cam_Ref.ret_cam_offset()
+    cam_pad = Cam_Ref.get_zoom_padding()
+    cam_mod = [cam_off[0] + cam_pad[0], cam_off[1] + cam_pad[1]]
+    pygame.draw.line(Screen, (100, 50, 100), ((Unit.get_x() + cam_mod[0]) / zl, (Unit.get_y() + cam_mod[1]) / zl), ((Unit.calculate_next_loc()[0] + cam_mod[0]) / zl, (Unit.calculate_next_loc()[1] + cam_mod[1]) / zl), 2)
     # pygame.display.flip()
 
 
-def DrawUnit(Screen, Unit):
+def DrawUnit(Screen, Unit, Cam_Ref):
+    zl = Cam_Ref.get_zoom_mod()
+    cam_off = Cam_Ref.ret_cam_offset()
+    cam_pad = Cam_Ref.get_zoom_padding()
+    cam_mod = [cam_off[0] + cam_pad[0], cam_off[1] + cam_pad[1]]
     if type(Unit) == Soldier:
         ufc = Unit.my_squad.squad_faction.get_fac_color()
         color = (ufc[0], ufc[1], ufc[2])
-        pygame.draw.rect(Screen, color, (Unit.get_x() - 5, Unit.get_y() - 5, 10, 10))
+        pygame.draw.rect(Screen, color, ((Unit.get_x() - 5 + cam_mod[0]) / zl, (Unit.get_y() - 5 + cam_mod[1]) / zl, 10 / zl, 10 / zl))
     elif type(Unit) == Objective:
-        color = (200, 200, 200)
-        obj_size = Unit.get_obj_size()
-        pygame.draw.rect(Screen, color, (Unit.get_obj_x() - obj_size / 2, Unit.get_obj_y() - obj_size / 2, obj_size, obj_size))
+        Unit.draw(Screen, zl, cam_mod)
     else:
         color = (30, 30, 30)
-        pygame.draw.rect(Screen, color, (Unit.get_x() - 5, Unit.get_y() - 5, 10, 10))
+        pygame.draw.rect(Screen, color, ((Unit.get_x() - 5 + cam_mod[0]) / zl, (Unit.get_y() - 5 + cam_mod[1]) / zl, 10 / zl, 10 / zl))
     # pygame.display.flip()
 
 
@@ -78,9 +89,12 @@ def add_test_factions(faction_list):
 
 
 pygame.init()
+pygame.key.set_repeat(500, 100)
+window_size = [640, 480]
 
 print("Wah")
 
+cam_data = Camera_Data(window_size)
 name_handler = Name_Handler()
 
 trgt = Target()
@@ -98,14 +112,14 @@ Soldiery = []
 Squads = []
 
 # Add 3 Squads
-for index, x in enumerate(range(1, 5)):
+for index, x in enumerate(range(1, 9)):
     add_squad(Soldiery, Squads, Factions[index % 2], Objectives)
 
 for sqd in Squads:
     # sqd.assign_objective(Objectives)
     sqd.find_objective()
 
-screen = pygame.display.set_mode((640, 480))
+screen = pygame.display.set_mode(window_size)
 
 while True:
     for event in pygame.event.get():
@@ -115,15 +129,38 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             m_pos = pygame.mouse.get_pos()
             trgt.set_location(m_pos[0], m_pos[1])
-        if event.type == pygame.K_SPACE:
-            print("Down")
+        if event.type == pygame.KEYDOWN:
+            # print("Down")
+            # print(event.key)
+            shift_press = False
+            if pygame.key.get_mods() == 1 or pygame.key.get_mods() == 2:
+                shift_press = True
+
+            # Zoom In
+            if event.key == 45:
+                cam_data.add_zoom()
+            # Zoom Out
+            elif event.key == 61:
+                cam_data.red_zoom()
+            # Up
+            elif event.key == 273:
+                cam_data.go_direction("up", shift_press)
+            # Right
+            elif event.key == 275:
+                cam_data.go_direction("right", shift_press)
+            # Down
+            elif event.key == 274:
+                cam_data.go_direction("down", shift_press)
+            # Left
+            elif event.key == 276:
+                cam_data.go_direction("left", shift_press)
 
     # Clear Screen
     screen.fill((0, 0, 0))
 
     # Draw Objectives
     for obj in Objectives:
-        DrawUnit(screen, obj)
+        DrawUnit(screen, obj, cam_data)
 
     # Go through each Squad
     for squad in Squads:
@@ -134,9 +171,9 @@ while True:
         # Move Soldier. Draw Soldier and Facing. Draw Target Lines.
         for soldat in squad_soldiers:
             soldat.next_action()
-            DrawUnit(screen, soldat)
-            DrawFaceLine(screen, soldat)
-            DrawTargetLine(screen, soldat)
-    DrawUnit(screen, trgt)
+            DrawUnit(screen, soldat, cam_data)
+            DrawFaceLine(screen, soldat, cam_data)
+            DrawTargetLine(screen, soldat, cam_data)
+    DrawUnit(screen, trgt, cam_data)
     pygame.display.flip()
     pygame.time.delay(100)
