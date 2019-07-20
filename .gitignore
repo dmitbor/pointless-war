@@ -1,2 +1,6 @@
-**.cpython-37.pyc
-*/__pycache__/*.pyc
+*.log
+*.pot
+*.pyc
+*/*/*/__pycache__/
+*/*/__pycache__/
+*/__pycache__/
