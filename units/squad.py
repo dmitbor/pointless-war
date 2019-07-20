@@ -57,6 +57,8 @@ class Squad():
                 new_mission.set_obj_capture(cur_choice)
                 self.squad_missions.append(new_mission)
                 self.set_members_to_objctv()
+            else:
+                print("We got all points! Victory!")
 
     def find_objective(self):
         self.set_new_target(self.ref_objs, "objective")
