@@ -26,6 +26,16 @@ class Squad():
     def set_first_as_lead(self):
         self.squad_leader = self.squad_members[0]
 
+    def set_new_leader(self):
+        sldr_chosen = None
+        sldr_int = 0
+        for soldier in self.squad_members:
+            if soldier.is_alive():
+                if soldier.stat_int > sldr_int:
+                    sldr_chosen = soldier
+        if sldr_chosen is not None:
+            self.squad_leader = sldr_chosen
+
     def assign_to_squad(self, unit_or_list):
         for unit in unit_or_list:
             self.squad_members.append(unit)
@@ -56,7 +66,7 @@ class Squad():
                 new_mission = Mission()
                 new_mission.set_obj_capture(cur_choice)
                 self.squad_missions.append(new_mission)
-                self.set_members_to_objctv()
+                # self.set_members_to_objctv()
             else:
                 print("We got all points! Victory!")
 
@@ -74,9 +84,9 @@ class Squad():
     def remove_latest_mission(self):
         self.squad_missions.pop(len(self.squad_missions) - 1)
 
-    def set_members_to_objctv(self):
-        for member in self.squad_members:
-            member.set_target(self.get_cur_mission().target)
+    # def set_members_to_objctv(self):
+    #     for member in self.squad_members:
+    #         member.set_target(self.get_cur_mission().target)
 
     def give_ref_obj(self, obj_list):
         self.ref_objs = obj_list

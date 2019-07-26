@@ -10,7 +10,11 @@ class Unit:
 
     speed = 0
 
-    target = None
+    movement_target = None
+    combat_target = None
+
+    def get_xy(self):
+        return self.x, self.y
 
     def get_x(self):
         return self.x
@@ -26,12 +30,19 @@ class Unit:
     def get_angle(self):
         return self.face_angle
 
-    def set_target(self, given_target):
-        self.target = given_target
-        return self.target
+    def set_move_target(self, given_target):
+        self.movement_target = given_target
+        return self.movement_target
 
-    def get_target(self):
-        return self.target
+    def set_comb_target(self, given_target):
+        self.combat_target = given_target
+        return self.combat_target
+
+    def get_move_target(self):
+        return self.movement_target
+
+    def get_comb_target(self):
+        return self.combat_target
 
     def __angle_overflow_handling(self, targ_angle, negative=False):
         if negative is False:
@@ -53,8 +64,8 @@ class Unit:
                     return True
             return False
 
-    def angle_2_target(self):
-        targ_angle = self.calc_angle_2_target()
+    def angle_2_target(self, target):
+        targ_angle = self.calc_angle_2_target(target)
 
         # Exceptional handling
         # T: Bottom Left. F: Upper Left
@@ -88,8 +99,8 @@ class Unit:
                 return True
         return False
 
-    def calc_angle_2_target(self):
-        t_angle = math.atan2(self.target.get_y() - self.y, self.target.get_x() - self.x)
+    def calc_angle_2_target(self, target):
+        t_angle = math.atan2(target.get_y() - self.y, target.get_x() - self.x)
         return math.degrees(t_angle)
 
     def calculate_next_loc(self, movement="Walk"):
