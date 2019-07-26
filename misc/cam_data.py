@@ -14,6 +14,8 @@ class Camera_Data:
     def __init__(self, viewport):
         self.display_width = viewport[0]
         self.display_height = viewport[1]
+        self.camera_offset_mod_x = 0 - self.get_zoom_padding()[0]
+        self.camera_offset_mod_y = 0 - self.get_zoom_padding()[1]
 
     def add_zoom(self):
         if self.zoom_level < 4:
